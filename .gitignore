@@ -1,0 +1,18 @@
+# Junk files
+*.bak
+*.swp
+*~
+.DS_Store
+._*
+
+# Firmware files
+*.uf2
+*.hex
+*.bin
+
+# ZMK/Zephyr build artifacts (if building locally)
+build/
+.west/
+zmk/
+zephyr/
+modules/
