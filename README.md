@@ -1,97 +1,147 @@
-# Ferris Sweep keymap (ZMK)
+# Ferris Sweep Keymap (ZMK)
 
-ZMK config for a Ferris Sweep with nice!nano v2 controllers, migrated from the QMK
-userspace in `../qmk-userspace` (which was for Elite-C controllers). The keymap lives
-in `config/cradio.keymap` — "cradio" is ZMK's in-tree shield name for the Sweep.
+This repository has the ZMK configuration for a Ferris Sweep keyboard. The keyboard has two
+nice!nano v2 controllers.
+
+The keymap file is `config/cradio.keymap`. ZMK uses the name "cradio" for the Ferris Sweep
+shield.
 
 ## Layers
 
-| Layer | How to reach it | Contents |
+The keyboard has four layers.
+
+| Layer | How to Get to the Layer | Content |
 |---|---|---|
-| BASE | — | Colemak-DH, home-row mods (GUI / Alt / Shift / Ctrl, AltGr on G and M) |
-| NUM | hold right outer thumb | Symbols on the left, numpad on the right |
-| NAV | hold left outer thumb | Esc, Tab, navigation, Insert/Delete, Caps Word (A) |
-| FUN | hold NUM + NAV | F1–F12, Bluetooth, volume, media |
+| BASE | Default layer | Colemak-DH layout. Home-row keys hold modifier keys. Refer to the Home-Row Modifier Keys table in this document. |
+| NUM | Hold the right outer thumb key | Symbols on the left half. Numbers on the right half. |
+| NAV | Hold the left outer thumb key | Esc, Tab, arrow keys, Insert, Delete, and the Caps Word function (key A). |
+| FUN | Hold the NUM key and the NAV key together | F1 to F12, Bluetooth keys, volume keys, and media keys. |
 
-### Bluetooth (FUN layer, top-left)
+### Home-Row Modifier Keys (BASE Layer)
 
-| Key | Action |
+The home-row keys hold modifier keys. The right half mirrors the left half.
+
+| Key | Modifier | Key | Modifier |
+|---|---|---|---|
+| A | GUI | O | GUI |
+| R | Alt | I | Alt |
+| S | Shift | E | Shift |
+| T | Ctrl | N | Ctrl |
+| G | AltGr | M | AltGr |
+
+### Bluetooth Keys (FUN Layer, Top-Left Keys)
+
+| Key | Function |
 |---|---|
-| BT1 / BT2 / BT3 | Select Bluetooth profile 0/1/2 |
-| BT clr | Clear (unpair) the current profile |
-| USB/BT | Toggle output between USB and Bluetooth |
+| BT1, BT2, BT3 | Select Bluetooth profile 0, 1, or 2. |
+| BT clr | Clear the bond for the current profile. |
+| USB/BT | Change the output between USB and Bluetooth. |
 
-### Volume and media (FUN layer, left half)
+### Volume and Media Keys (FUN Layer, Left Half)
 
-| Key | Action |
+| Key | Function |
 |---|---|
-| R | Volume down |
-| S | Mute |
-| T | Volume up |
-| X | Previous track |
-| C | Play / pause |
-| D | Next track |
+| R | Turn the volume down. |
+| S | Mute the volume. |
+| T | Turn the volume up. |
+| X | Go to the previous track. |
+| C | Play or pause. |
+| D | Go to the next track. |
 
-There are no keymap keys for reset or bootloader; use each half's physical reset button
-(double-tap for bootloader mode — see **Flash** below).
+The keymap has no keys for the reset function or the bootloader function. Use the physical
+reset button on each half. Refer to the Flash Procedure in this document for the bootloader
+procedure.
 
-## Build
+## Build Procedure
 
-GitHub Actions builds the firmware on every push (see `.github/workflows/build.yml`), using
-`build.yaml` to produce three `.uf2` files per run, downloadable from the workflow's Summary
-page as a zip of artifacts:
+GitHub Actions builds the firmware after each push to the repository. Refer to the file
+`.github/workflows/build.yml`. The build uses the file `build.yaml`. The build makes three
+`.uf2` files:
 
 - `cradio_left-nice_nano_v2-zmk.uf2`
 - `cradio_right-nice_nano_v2-zmk.uf2`
 - `settings_reset-nice_nano_v2-zmk.uf2`
 
-## Flash
+Get these files from the Summary page of the GitHub Actions workflow run.
 
-1. First time (or to re-pair): put each half in bootloader mode (double-tap the reset button)
-   and drag `settings_reset-nice_nano_v2-zmk.uf2` onto the `NICENANO` drive that appears. This
-   clears any stored BT bonds/keymap state. Wait for the LED to settle, then repeat once per half.
-1. Flash the real firmware the same way: `cradio_left-...uf2` to the left half, `cradio_right-...uf2`
-   to the right half.
-1. Power both halves on. The left half is the "central" (the one your computer pairs with); the
-   right half is the "peripheral" and connects to the left over BLE. Pair the left half with your
-   computer/phone as a normal Bluetooth keyboard.
-1. To pair with another host, switch profiles with the BT1/BT2/BT3 keys on the FUN layer
-   (hold NUM + NAV) before connecting, or `BT clr` to forget the current one.
+## Flash Procedure
 
-Unlike the QMK build, handedness is set by which `.uf2` you flash to which half (via the
-`cradio_left`/`cradio_right` shields), not by stored EEPROM state — so re-flashing never mixes up
-which half is which.
+Do this procedure to flash new firmware on the keyboard.
 
-### Name and battery
+1. Push the reset button on one half two times. This puts the half in bootloader mode.
+1. Drag the file `settings_reset-nice_nano_v2-zmk.uf2` to the drive with the name `NICENANO`.
+1. Wait until the LED stops and the drive disconnects.
+1. Do step 1 to step 3 again for the other half.
+1. Push the reset button on the left half two times.
+1. Drag the file `cradio_left-nice_nano_v2-zmk.uf2` to the `NICENANO` drive.
+1. Push the reset button on the right half two times.
+1. Drag the file `cradio_right-nice_nano_v2-zmk.uf2` to the `NICENANO` drive.
+1. Supply power to both halves.
 
-The keyboard's Bluetooth/USB name is `CONFIG_ZMK_KEYBOARD_NAME` in `config/cradio.conf` (max 16
-characters, currently "Ferris Sweep"). Only the left half ever advertises to a host or shows
-up in Bluetooth settings — the right half has no host-facing Bluetooth role at all, so it can't
-have (and doesn't need) a name of its own.
+Note: Do steps 1 to 3 (the settings reset procedure) only in two cases: before the first flash,
+or to remove old Bluetooth bonds.
 
-`cradio.conf` also turns on `CONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_PROXY`, which reports
-both halves' batteries as two separate entries in the host's Bluetooth battery UI — but both
-entries show the same device name, since they both belong to the one connection with the left
-half. There's no way to label them "left"/"right" from the keyboard side; telling them apart
-needs a host-side tool (e.g. [Mighty Mitts](https://github.com/codyd51/Mighty-Mitts) on macOS)
-that reads which battery characteristic is which.
+The left half is the central half. Connect the left half to the computer or the phone. The
+right half is the peripheral half. The right half connects to the left half with a Bluetooth
+Low Energy (BLE) link.
 
-## Tuning
+To connect the keyboard to a different host, do these steps:
 
-**Caps Word** (NAV layer, A) capitalizes letters until it sees a space, Enter, or most other
-keys. It stays on through digits, underscore, hyphen, Backspace and Delete, so `MY-VAR_1` types
-fully capitalized. That's the `continue-list` on the `&caps_word` override near the top of
-`cradio.keymap` (the stock list is just underscore/backspace/delete).
+1. Hold the NUM key and the NAV key together to get to the FUN layer.
+1. Push a BT key (BT1, BT2, or BT3) to select a profile.
+1. Connect the new host to the keyboard.
 
-Home-row mod timing lives in `config/cradio.keymap`, in the `hml`/`hmr` hold-tap behaviors
-(`HM_PROPS`):
+To remove a Bluetooth bond, push the BT clr key.
 
-- `tapping-term-ms` — how long a hold has to last to register as a modifier (was QMK's `TAPPING_TERM`).
-- `flavor = "balanced"` — a same-hand key typed before the term expires rolls through as a tap
-  (was QMK's `PERMISSIVE_HOLD`).
-- `hold-trigger-key-positions` + `hold-trigger-on-release` — a hold only acts as a modifier when
-  the next key is on the opposite hand or a thumb key (was QMK's `CHORDAL_HOLD`).
-- `require-prior-idle-ms` — suppresses the hold if you were just typing fast (was QMK's `FLOW_TAP_TERM`).
+Note: The build system assigns the left half and the right half by the `.uf2` file, not by data
+in memory. A new flash procedure cannot change which half is the left half or the right half.
 
-See the [ZMK hold-tap docs](https://zmk.dev/docs/keymaps/behaviors/hold-tap) for the full set of
-options.
+### Keyboard Name and Battery Level
+
+The keyboard has one Bluetooth name and one USB name. The setting for the name is
+`CONFIG_ZMK_KEYBOARD_NAME`, in the file `config/cradio.conf`. The name can have a maximum of 16
+characters. The current name is "Ferris Sweep".
+
+Only the left half sends data to a host. Only the left half shows in the Bluetooth settings of
+a host. The right half has no connection to a host, and the right half does not need a name.
+
+The file `cradio.conf` also has the setting `CONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_PROXY`.
+This setting sends the battery level of both halves to the host. The battery display of the
+host shows two entries. Both entries show the same device name, because both battery levels
+come from the one connection with the left half.
+
+Note: The keyboard cannot show different names for the left entry and the right entry. To
+identify the halves, use a tool on the host. One example for macOS is Mighty Mitts:
+<https://github.com/codyd51/Mighty-Mitts>
+
+## Adjustment Procedure
+
+### Caps Word Function
+
+The Caps Word function is on the NAV layer, at key A.
+
+The Caps Word function makes letters capital. The function continues until you push the Space
+key, the Enter key, or most other keys. The function continues after these keys: digits, the
+underscore key, the hyphen key, the Backspace key, and the Delete key.
+
+Example: the text "MY-VAR_1" stays in capital letters.
+
+The setting for this function is the `continue-list` property. Find this property on the
+`&caps_word` node, near the start of the file `cradio.keymap`. The default `continue-list` has
+only the underscore key, the Backspace key, and the Delete key.
+
+### Home-Row Modifier Timing
+
+The home-row modifier timing settings are in the file `config/cradio.keymap`. Find the settings
+in the `hml` and `hmr` hold-tap behaviors. The macro `HM_PROPS` has these settings:
+
+- `tapping-term-ms`: This is the time to hold a key before the system reads the key as a
+  modifier key.
+- `flavor = "balanced"`: If you push a key on the same hand before the tapping term ends, the
+  system reads the key as a normal key press.
+- `hold-trigger-key-positions` and `hold-trigger-on-release`: A held key is a modifier key only
+  when you push the next key with the other hand, or with a thumb.
+- `require-prior-idle-ms`: This setting stops the modifier function when you type fast.
+
+For more data about these settings, refer to the ZMK documentation for the hold-tap behavior:
+<https://zmk.dev/docs/keymaps/behaviors/hold-tap>
