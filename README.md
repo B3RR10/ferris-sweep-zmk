@@ -10,11 +10,10 @@ in `config/cradio.keymap` — "cradio" is ZMK's in-tree shield name for the Swee
 |---|---|---|
 | BASE | — | Colemak-DH, home-row mods (GUI / Alt / Shift / Ctrl, AltGr on G and M) |
 | NUM | hold right outer thumb | Symbols on the left, numpad on the right |
-| FUN | hold left outer thumb | Navigation, plain modifiers, Ctrl clipboard, reset/bootloader, Bluetooth |
-| FUN2 | hold NUM + FUN | F1–F12, F13, Ctrl+Shift clipboard, bootloader (right half) |
-| NUM2 | hold NUM + left inner thumb | AltGr characters (¿ « » €), `` ` ~ _ \| ^ ``, volume |
+| NAV | hold left outer thumb | Esc, Tab, navigation, Insert/Delete, Caps Word (A) |
+| FUN | hold NUM + NAV | F1–F12, Bluetooth, volume, media |
 
-### Bluetooth (FUN layer, bottom-right)
+### Bluetooth (FUN layer, top-left)
 
 | Key | Action |
 |---|---|
@@ -22,14 +21,19 @@ in `config/cradio.keymap` — "cradio" is ZMK's in-tree shield name for the Swee
 | BT clr | Clear (unpair) the current profile |
 | USB/BT | Toggle output between USB and Bluetooth |
 
-### Reset and bootloader
+### Volume and media (FUN layer, left half)
 
-- FUN → top-left (`Reset`): soft reset (`&sys_reset`).
-- FUN → top-right (`Boot`): bootloader, **left half only**.
-- FUN2 → top-right (`Boot`): bootloader, **right half only**.
+| Key | Action |
+|---|---|
+| R | Volume down |
+| S | Mute |
+| T | Volume up |
+| X | Previous track |
+| C | Play / pause |
+| D | Next track |
 
-`&bootloader` only resets the half the key is physically on, so each half needs its own key —
-hold the half's own thumb combo before pressing it.
+There are no keymap keys for reset or bootloader; use each half's physical reset button
+(double-tap for bootloader mode — see **Flash** below).
 
 ## Build
 
@@ -51,14 +55,19 @@ page as a zip of artifacts:
 3. Power both halves on. The left half is the "central" (the one your computer pairs with); the
    right half is the "peripheral" and connects to the left over BLE. Pair the left half with your
    computer/phone as a normal Bluetooth keyboard.
-4. To pair with another host, switch profiles with the BT1/BT2/BT3 keys on the FUN layer before
-   connecting, or `BT clr` to forget the current one.
+4. To pair with another host, switch profiles with the BT1/BT2/BT3 keys on the FUN layer
+   (hold NUM + NAV) before connecting, or `BT clr` to forget the current one.
 
 Unlike the QMK build, handedness is set by which `.uf2` you flash to which half (via the
 `cradio_left`/`cradio_right` shields), not by stored EEPROM state — so re-flashing never mixes up
 which half is which.
 
 ## Tuning
+
+**Caps Word** (NAV layer, A) capitalizes letters until it sees a space, Enter, or most other
+keys. It stays on through digits, underscore, hyphen, Backspace and Delete, so `MY-VAR_1` types
+fully capitalized. That's the `continue-list` on the `&caps_word` override near the top of
+`cradio.keymap` (the stock list is just underscore/backspace/delete).
 
 Home-row mod timing lives in `config/cradio.keymap`, in the `hml`/`hmr` hold-tap behaviors
 (`HM_PROPS`):

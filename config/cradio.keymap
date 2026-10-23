@@ -1,11 +1,3 @@
-// Ferris Sweep keymap (nice!nano v2), migrated from the QMK userspace
-// (qmk-userspace/keyboards/ferris/sweep/keymaps/mberrio/keymap.c).
-//
-// Base: Colemak-DH with home-row mods (GACS on the left, mirrored on the right;
-// G and M hold Right Alt for AltGr characters).
-// Thumbs: [FUN] [Bspc]   [Space] [NUM]. Holding NUM + FUN together gives FUN2.
-// NUM + the Bspc thumb gives NUM2.
-
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/keys.h>
 #include <dt-bindings/zmk/bt.h>
@@ -13,9 +5,8 @@
 
 #define BASE 0
 #define NUM  1
-#define FUN  2
-#define FUN2 3
-#define NUM2 4
+#define NAV  2
+#define FUN  3
 
 // Key positions
 //  0  1  2  3  4    5  6  7  8  9
@@ -26,18 +17,16 @@
 #define KEYS_R 5 6 7 8 9 15 16 17 18 19 25 26 27 28 29
 #define THUMBS 30 31 32 33
 
-// Home-row mods. Equivalent of the QMK settings:
-//   TAPPING_TERM 200  -> tapping-term-ms
-//   PERMISSIVE_HOLD   -> flavor "balanced"
-//   CHORDAL_HOLD      -> hold-trigger-key-positions (opposite hand + thumbs)
-//   FLOW_TAP_TERM 150 -> require-prior-idle-ms
-// Raise tapping-term-ms if letters turn into modifiers while typing.
 #define HM_PROPS \
     flavor = "balanced"; \
-    tapping-term-ms = <200>; \
-    quick-tap-ms = <200>; \
+    tapping-term-ms = <280>; \
+    quick-tap-ms = <175>; \
     require-prior-idle-ms = <150>; \
     hold-trigger-on-release;
+
+&caps_word {
+    continue-list = <UNDERSCORE MINUS BACKSPACE DELETE>;
+};
 
 / {
     behaviors {
@@ -57,12 +46,12 @@
         };
     };
 
-    // Holding NUM and FUN together activates FUN2, in either order.
+    // Holding NUM and NAV together activates FUN, in either order.
     conditional_layers {
         compatible = "zmk,conditional-layers";
-        fun2 {
-            if-layers = <NUM FUN>;
-            then-layer = <FUN2>;
+        fun {
+            if-layers = <NUM NAV>;
+            then-layer = <FUN>;
         };
     };
 
@@ -82,8 +71,8 @@
         //│ Z       │ X       │ C       │ D       │ V       │   │ K       │ H       │ ,       │ .       │ /       │
             &kp Z     &kp X     &kp C     &kp D     &kp V         &kp K     &kp H     &kp COMMA &kp DOT   &kp FSLH
         //╰─────────┴─────────┴─────────┼─────────┼─────────┤   ├─────────┼─────────┼─────────┴─────────┴─────────╯
-        //                              │ FUN     │ Bspc    │   │ Space   │ NUM     │
-                                          &mo FUN   &kp BSPC      &kp SPACE &mo NUM
+        //                              │ NAV     │ Bspc    │   │ Space   │ NUM     │
+                                          &mo NAV   &kp BSPC      &kp SPACE &mo NUM
         //                              ╰─────────┴─────────╯   ╰─────────┴─────────╯
             >;
         };
@@ -98,11 +87,30 @@
         //│ ;       │ :       │ (       │ [       │ {       │   │ *       │ 4       │ 5       │ 6       │ -       │
             &kp SEMI  &kp COLON &kp LPAR  &kp LBKT  &kp LBRC      &kp STAR  &kp N4    &kp N5    &kp N6    &kp MINUS
         //├─────────┼─────────┼─────────┼─────────┼─────────┤   ├─────────┼─────────┼─────────┼─────────┼─────────┤
-        //│ +       │ &       │ )       │ ]       │ }       │   │ 0       │ 1       │ 2       │ 3       │ Enter   │
-            &kp PLUS  &kp AMPS  &kp RPAR  &kp RBKT  &kp RBRC      &kp N0    &kp N1    &kp N2    &kp N3    &kp RET
+        //│ `       │ ~       │ )       │ ]       │ }       │   │ 0       │ 1       │ 2       │ 3       │ Enter   │
+            &kp GRAVE &kp TILDE &kp RPAR  &kp RBKT  &kp RBRC      &kp N0    &kp N1    &kp N2    &kp N3    &kp RET
         //╰─────────┴─────────┴─────────┼─────────┼─────────┤   ├─────────┼─────────┼─────────┴─────────┴─────────╯
-        //                              │         │ NUM2    │   │         │ ▼       │
-                                          &trans    &mo NUM2      &none     &trans
+        //                              │         │         │   │         │ ▼       │
+                                          &trans    &none         &none     &trans
+        //                              ╰─────────┴─────────╯   ╰─────────┴─────────╯
+            >;
+        };
+
+        nav {
+            display-name = "NAV";
+            bindings = <
+        //╭─────────┬─────────┬─────────┬─────────┬─────────╮   ╭─────────┬─────────┬─────────┬─────────┬─────────╮
+        //│ Esc     │         │         │         │         │   │ PgUp    │ Home    │ Up      │ End     │ Insert  │
+            &kp ESC   &none     &none     &none     &none         &kp PG_UP &kp HOME  &kp UP    &kp END   &kp INS
+        //├─────────┼─────────┼─────────┼─────────┼─────────┤   ├─────────┼─────────┼─────────┼─────────┼─────────┤
+        //│ Caps    │         │         │         │         │   │ PgDn    │ Left    │ Down    │ Right   │ Del     │
+            &caps_word &none  &none     &none     &none         &kp PG_DN &kp LEFT  &kp DOWN  &kp RIGHT &kp DEL
+        //├─────────┼─────────┼─────────┼─────────┼─────────┤   ├─────────┼─────────┼─────────┼─────────┼─────────┤
+        //│         │         │         │ Tab     │         │   │         │         │         │         │         │
+            &none     &none     &none     &kp TAB   &none         &none     &none     &none     &none     &none
+        //╰─────────┴─────────┴─────────┼─────────┼─────────┤   ├─────────┼─────────┼─────────┴─────────┴─────────╯
+        //                              │ ▼       │         │   │         │         │
+                                          &trans    &none         &none     &trans
         //                              ╰─────────┴─────────╯   ╰─────────┴─────────╯
             >;
         };
@@ -110,57 +118,19 @@
         fun {
             display-name = "FUN";
             bindings = <
-        //╭─────────┬─────────┬─────────┬─────────┬─────────╮   ╭─────────┬─────────┬─────────┬─────────┬─────────╮
-        //│ Esc     │ Reset   │         │         │ Boot(L) │   │ PgUp    │ Home    │ Up      │ End     │ Esc     │
-            &kp ESC   &sys_reset &none    &none     &bootloader   &kp PG_UP &kp HOME  &kp UP    &kp END   &kp ESC
-        //├─────────┼─────────┼─────────┼─────────┼─────────┤   ├─────────┼─────────┼─────────┼─────────┼─────────┤
-        //│ GUI     │ Alt     │ Shift   │ Ctrl    │ AltGr   │   │ PgDn    │ Left    │ Down    │ Right   │ Del     │
-            &kp LGUI  &kp LALT  &kp LSHFT &kp LCTRL &kp RALT      &kp PG_DN &kp LEFT  &kp DOWN  &kp RIGHT &kp DEL
-        //├─────────┼─────────┼─────────┼─────────┼─────────┤   ├─────────┼─────────┼─────────┼─────────┼─────────┤
-        //│ Undo    │ Cut     │ Copy    │ Tab     │ Paste   │   │ BT 1    │ BT 2    │ BT 3    │ BT clr  │ USB/BT  │
-            &kp LC(Z) &kp LC(X) &kp LC(C) &kp TAB   &kp LC(V)     &bt BT_SEL 0 &bt BT_SEL 1 &bt BT_SEL 2 &bt BT_CLR &out OUT_TOG
-        //╰─────────┴─────────┴─────────┼─────────┼─────────┤   ├─────────┼─────────┼─────────┴─────────┴─────────╯
-        //                              │ ▼       │         │   │ Enter   │         │
-                                          &trans    &none         &kp RET   &trans
-        //                              ╰─────────┴─────────╯   ╰─────────┴─────────╯
-            >;
-        };
-
-        fun2 {
-            display-name = "FUN2";
-            bindings = <
-        //╭─────────┬─────────┬─────────┬─────────┬─────────╮   ╭─────────┬─────────┬─────────┬─────────┬─────────╮
-        //│         │         │         │ F13     │         │   │ F12     │ F7      │ F8      │ F9      │ Boot(R) │
-            &none     &none     &none     &kp F13   &none         &kp F12   &kp F7    &kp F8    &kp F9    &bootloader
-        //├─────────┼─────────┼─────────┼─────────┼─────────┤   ├─────────┼─────────┼─────────┼─────────┼─────────┤
-        //│ GUI     │ Alt     │ Shift   │ Ctrl    │ AltGr   │   │ F11     │ F4      │ F5      │ F6      │         │
-            &kp LGUI  &kp LALT  &kp LSHFT &kp LCTRL &kp RALT      &kp F11   &kp F4    &kp F5    &kp F6    &none
-        //├─────────┼─────────┼─────────┼─────────┼─────────┤   ├─────────┼─────────┼─────────┼─────────┼─────────┤
-        //│ C-S-Z   │ C-S-X   │ C-S-C   │ S-Tab   │ C-S-V   │   │ F10     │ F1      │ F2      │ F3      │         │
-            &kp RC(RS(Z)) &kp RC(RS(X)) &kp RC(RS(C)) &kp LS(TAB) &kp RC(RS(V))  &kp F10 &kp F1 &kp F2 &kp F3 &none
-        //╰─────────┴─────────┴─────────┼─────────┼─────────┤   ├─────────┼─────────┼─────────┴─────────┴─────────╯
-        //                              │ ▼       │         │   │         │ ▼       │
-                                          &trans    &none         &none     &trans
-        //                              ╰─────────┴─────────╯   ╰─────────┴─────────╯
-            >;
-        };
-
-        num2 {
-            display-name = "NUM2";
-            bindings = <
-        //╭─────────┬─────────┬─────────┬─────────┬─────────╮   ╭─────────┬─────────┬─────────┬─────────┬─────────╮
-        //│ S-AG-1  │ ¿       │ «       │ »       │ €       │   │         │ Vol+    │         │         │         │
-            &kp RS(RA(N1)) &kp RA(FSLH) &kp RA(LBKT) &kp RA(RBKT) &kp RA(N5)  &none &kp C_VOL_UP &none &none &none
-        //├─────────┼─────────┼─────────┼─────────┼─────────┤   ├─────────┼─────────┼─────────┼─────────┼─────────┤
-        //│ `       │ ~       │ _       │ |       │ ^       │   │         │ Mute    │         │         │         │
-            &kp GRAVE &kp TILDE &kp UNDER &kp PIPE  &kp CARET     &none     &kp C_MUTE &none    &none     &none
-        //├─────────┼─────────┼─────────┼─────────┼─────────┤   ├─────────┼─────────┼─────────┼─────────┼─────────┤
-        //│         │         │         │         │         │   │         │ Vol-    │         │         │         │
-            &none     &none     &none     &none     &none         &none     &kp C_VOL_DN &none  &none     &none
-        //╰─────────┴─────────┴─────────┼─────────┼─────────┤   ├─────────┼─────────┼─────────┴─────────┴─────────╯
-        //                              │         │ ▼       │   │         │ ▼       │
-                                          &none     &trans        &none     &trans
-        //                              ╰─────────┴─────────╯   ╰─────────┴─────────╯
+        //╭─────────┬─────────┬─────────┬─────────┬─────────╮               ╭─────────┬─────────┬─────────┬─────────┬─────────╮
+        //│ BT 1    │ BT 2    │ BT 3    │ BT clr  │ USB/BT  │               │ F12     │ F7      │ F8      │ F9      │         │
+            &bt BT_SEL 0 &bt BT_SEL 1 &bt BT_SEL 2 &bt BT_CLR &out OUT_TOG    &kp F12   &kp F7    &kp F8    &kp F9    &none
+        //├─────────┼─────────┼─────────┼─────────┼─────────┤               ├─────────┼─────────┼─────────┼─────────┼─────────┤
+        //│         │ Vol-    │ Mute    │ Vol+    │         │               │ F11     │ F4      │ F5      │ F6      │         │
+            &none     &kp C_VOL_DN &kp C_MUTE &kp C_VOL_UP &none              &kp F11   &kp F4    &kp F5    &kp F6    &none
+        //├─────────┼─────────┼─────────┼─────────┼─────────┤               ├─────────┼─────────┼─────────┼─────────┼─────────┤
+        //│         │ Prev    │ Play    │ Next    │         │               │ F10     │ F1      │ F2      │ F3      │         │
+            &none     &kp C_PREV &kp C_PP &kp C_NEXT &none                    &kp F10   &kp F1    &kp F2    &kp F3    &none
+        //╰─────────┴─────────┴─────────┼─────────┼─────────┤               ├─────────┼─────────┼─────────┴─────────┴─────────╯
+        //                              │ ▼       │         │               │         │ ▼       │
+                                          &trans    &none                     &none     &trans
+        //                              ╰─────────┴─────────╯               ╰─────────┴─────────╯
             >;
         };
     };
