@@ -50,12 +50,12 @@ page as a zip of artifacts:
 1. First time (or to re-pair): put each half in bootloader mode (double-tap the reset button)
    and drag `settings_reset-nice_nano_v2-zmk.uf2` onto the `NICENANO` drive that appears. This
    clears any stored BT bonds/keymap state. Wait for the LED to settle, then repeat once per half.
-2. Flash the real firmware the same way: `cradio_left-...uf2` to the left half, `cradio_right-...uf2`
+1. Flash the real firmware the same way: `cradio_left-...uf2` to the left half, `cradio_right-...uf2`
    to the right half.
-3. Power both halves on. The left half is the "central" (the one your computer pairs with); the
+1. Power both halves on. The left half is the "central" (the one your computer pairs with); the
    right half is the "peripheral" and connects to the left over BLE. Pair the left half with your
    computer/phone as a normal Bluetooth keyboard.
-4. To pair with another host, switch profiles with the BT1/BT2/BT3 keys on the FUN layer
+1. To pair with another host, switch profiles with the BT1/BT2/BT3 keys on the FUN layer
    (hold NUM + NAV) before connecting, or `BT clr` to forget the current one.
 
 Unlike the QMK build, handedness is set by which `.uf2` you flash to which half (via the
@@ -64,12 +64,17 @@ which half is which.
 
 ### Name and battery
 
-Each half has its own Bluetooth/USB name (`CONFIG_ZMK_KEYBOARD_NAME`, max 16 characters): "Ferris
-Sweep L" from `config/cradio_left.conf`, "Ferris Sweep R" from `config/cradio_right.conf`. Only
-the left half is what you pair with as a keyboard — the right half's name just exists so your
-OS's Bluetooth battery UI can tell the two halves apart, since `cradio.conf` turns on
-`CONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_PROXY`, which reports both halves' batteries as two
-separate entries. Without distinct names, those two entries are indistinguishable.
+The keyboard's Bluetooth/USB name is `CONFIG_ZMK_KEYBOARD_NAME` in `config/cradio.conf` (max 16
+characters, currently "Ferris Sweep"). Only the left half ever advertises to a host or shows
+up in Bluetooth settings — the right half has no host-facing Bluetooth role at all, so it can't
+have (and doesn't need) a name of its own.
+
+`cradio.conf` also turns on `CONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_PROXY`, which reports
+both halves' batteries as two separate entries in the host's Bluetooth battery UI — but both
+entries show the same device name, since they both belong to the one connection with the left
+half. There's no way to label them "left"/"right" from the keyboard side; telling them apart
+needs a host-side tool (e.g. [Mighty Mitts](https://github.com/codyd51/Mighty-Mitts) on macOS)
+that reads which battery characteristic is which.
 
 ## Tuning
 
