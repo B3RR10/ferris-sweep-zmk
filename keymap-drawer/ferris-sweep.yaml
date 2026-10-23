@@ -66,7 +66,7 @@ layers:
   - '2'
   - '3'
   - RET
-  - {t: ▽, type: trans}
+  - FUN
   - ''
   - ''
   - {type: held}
@@ -104,7 +104,7 @@ layers:
   - {type: held}
   - ''
   - ''
-  - {t: ▽, type: trans}
+  - FUN
   FUN:
   - BT 1
   - BT 2
