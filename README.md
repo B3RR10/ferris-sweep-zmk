@@ -62,6 +62,15 @@ Unlike the QMK build, handedness is set by which `.uf2` you flash to which half 
 `cradio_left`/`cradio_right` shields), not by stored EEPROM state — so re-flashing never mixes up
 which half is which.
 
+### Name and battery
+
+Each half has its own Bluetooth/USB name (`CONFIG_ZMK_KEYBOARD_NAME`, max 16 characters): "Ferris
+Sweep L" from `config/cradio_left.conf`, "Ferris Sweep R" from `config/cradio_right.conf`. Only
+the left half is what you pair with as a keyboard — the right half's name just exists so your
+OS's Bluetooth battery UI can tell the two halves apart, since `cradio.conf` turns on
+`CONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_PROXY`, which reports both halves' batteries as two
+separate entries. Without distinct names, those two entries are indistinguishable.
+
 ## Tuning
 
 **Caps Word** (NAV layer, A) capitalizes letters until it sees a space, Enter, or most other
