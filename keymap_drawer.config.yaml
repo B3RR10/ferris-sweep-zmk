@@ -1,0 +1,15 @@
+parse_config:
+  raw_binding_map:
+    "&caps_word": "Caps Word"
+    "&bt BT_SEL 0": "BT 1"
+    "&bt BT_SEL 1": "BT 2"
+    "&bt BT_SEL 2": "BT 3"
+    "&bt BT_CLR": "BT clr"
+    "&out OUT_TOG": "USB/BT"
+  zmk_keycode_map:
+    C_VOL_DN: "Vol-"
+    C_VOL_UP: "Vol+"
+    C_MUTE: "Mute"
+    C_PP: "Play"
+    C_PREV: "Prev"
+    C_NEXT: "Next"

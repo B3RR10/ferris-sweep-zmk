@@ -17,6 +17,11 @@ The keyboard has four layers.
 | NAV | Hold the left outer thumb key | Esc, Tab, arrow keys, Insert, Delete, and the Caps Word function (key A). |
 | FUN | Hold the NUM key and the NAV key together | F1 to F12, Bluetooth keys, volume keys, and media keys. |
 
+![Keymap layers](keymap-drawer/cradio.svg)
+
+Run `./draw-keymap.sh` to make the image again after a change to `config/cradio.keymap`.
+The script needs Nix.
+
 ### Home-Row Modifier Keys (BASE Layer)
 
 The home-row keys hold modifier keys. The right half mirrors the left half.
