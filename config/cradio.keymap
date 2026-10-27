@@ -21,7 +21,6 @@
     flavor = "balanced"; \
     tapping-term-ms = <200>; \
     quick-tap-ms = <175>; \
-    require-prior-idle-ms = <150>; \
     hold-trigger-on-release;
 
 &caps_word {
@@ -30,14 +29,34 @@
 
 / {
     behaviors {
+        // GUI/Alt/Ctrl: a key pressed within 150 ms of the previous key is a tap.
         hml: home_row_mod_left {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            bindings = <&kp>, <&kp>;
+            HM_PROPS
+            require-prior-idle-ms = <150>;
+            hold-trigger-key-positions = <KEYS_R THUMBS>;
+        };
+        hmr: home_row_mod_right {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            bindings = <&kp>, <&kp>;
+            HM_PROPS
+            require-prior-idle-ms = <150>;
+            hold-trigger-key-positions = <KEYS_L THUMBS>;
+        };
+
+        // Shift/AltGr: no idle rule, so capitals and accents work in fast typing.
+        // Same-hand keys still give a tap (hold-trigger-key-positions).
+        hmlf: home_row_mod_left_fast {
             compatible = "zmk,behavior-hold-tap";
             #binding-cells = <2>;
             bindings = <&kp>, <&kp>;
             HM_PROPS
             hold-trigger-key-positions = <KEYS_R THUMBS>;
         };
-        hmr: home_row_mod_right {
+        hmrf: home_row_mod_right_fast {
             compatible = "zmk,behavior-hold-tap";
             #binding-cells = <2>;
             bindings = <&kp>, <&kp>;
@@ -66,7 +85,7 @@
             &kp Q     &kp W     &kp F     &kp P     &kp B         &kp J     &kp L     &kp U     &kp Y     &kp SQT
         //├─────────┼─────────┼─────────┼─────────┼─────────┤   ├─────────┼─────────┼─────────┼─────────┼─────────┤
         //│ A/GUI   │ R/Alt   │ S/Sft   │ T/Ctl   │ G/AltGr │   │ M/AltGr │ N/Ctl   │ E/Sft   │ I/Alt   │ O/GUI   │
-            &hml LGUI A &hml LALT R &hml LSHFT S &hml LCTRL T &hml RALT G  &hmr RALT M &hmr RCTRL N &hmr RSHFT E &hmr LALT I &hmr RGUI O
+            &hml LGUI A &hml LALT R &hmlf LSHFT S &hml LCTRL T &hmlf RALT G  &hmrf RALT M &hmr RCTRL N &hmrf RSHFT E &hmr LALT I &hmr RGUI O
         //├─────────┼─────────┼─────────┼─────────┼─────────┤   ├─────────┼─────────┼─────────┼─────────┼─────────┤
         //│ Z       │ X       │ C       │ D       │ V       │   │ K       │ H       │ ,       │ .       │ /       │
             &kp Z     &kp X     &kp C     &kp D     &kp V         &kp K     &kp H     &kp COMMA &kp DOT   &kp FSLH
